@@ -22,16 +22,16 @@ jobs:
 
       - name: Extract Bucket Name from issue
         run: |
-          export BUCKET_NAME=$(echo ${{ github.event.issue.title }})
+          export BUCKET_NAME=$(echo "${{ github.event.issue.title }}")
           echo "Bucket Name: $BUCKET_NAME"
-          echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV"
+          echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
       
       - name: Run Terraform
         run: |
           cd terraform
           cd s3-bucket-static
           terraform init
-          terraform apply -auto-approve -var "bucket_name=${{env.BUCKET_NAME}}"
+          terraform apply -auto-approve -var "bucket_name=${{ env.BUCKET_NAME }}"
 
       - name: Add comment
         run: gh issue comment "$NUMBER" --repo "$REPO" --body "$BODY"
@@ -39,4 +39,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUMBER: ${{ github.event.issue.number }}
           REPO: ${{ github.repository }}
-          BODY: "Bucket created: $BUCKET_NAME 🚀"
+          BODY: "Bucket created: ${{ env.BUCKET_NAME }} 🚀"
