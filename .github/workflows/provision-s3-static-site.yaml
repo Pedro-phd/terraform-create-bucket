@@ -20,6 +20,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
       - name: Extract Bucket Name from issue
         run: |
           export BUCKET_NAME=$(echo "${{ github.event.issue.title }}")
@@ -28,8 +33,7 @@ jobs:
       
       - name: Run Terraform
         run: |
-          cd terraform
-          cd s3-bucket-static
+          cd terraform/s3-bucket-static
           terraform init
           terraform apply -auto-approve -var "bucket_name=${{ env.BUCKET_NAME }}"
 
