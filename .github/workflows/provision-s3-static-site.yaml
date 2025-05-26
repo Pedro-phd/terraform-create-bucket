@@ -22,9 +22,9 @@ jobs:
 
       - name: Extract Bucket Name from issue
         run: |
-          export BUCKET_NAME=$(echo "${{ github.event.issue.title }}")
+          export BUCKET_NAME=$(echo ${{ github.event.issue.title }})
           echo "Bucket Name: $BUCKET_NAME"
-          exho "BUCKETT_NAME=$BUCKET_NAME" >> $GITHUB_ENV"
+          echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV"
       
       - name: Run Terraform
         run: |
@@ -38,5 +38,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUMBER: ${{ github.event.issue.number }}
-          REPO: ${{ github.event.repository }}
+          REPO: ${{ github.repository }}
           BODY: "Bucket created: $BUCKET_NAME 🚀"
