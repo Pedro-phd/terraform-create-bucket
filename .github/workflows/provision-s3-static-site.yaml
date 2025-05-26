@@ -5,6 +5,10 @@ on:
     types: 
       - opened
 
+permissions:
+  issues: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -36,6 +40,10 @@ jobs:
           cd terraform/s3-bucket-static
           terraform init
           terraform apply -auto-approve -var "bucket_name=${{ env.BUCKET_NAME }}"
+          WEBSITE_URL=$(terraform output -raw website_url)
+          BUCKET_NAME_OUTPUT=$(terraform output -raw bucket_name)
+
+          echo "website_url=$WEBSITE_URL" >> $URL_BUCKET
 
       - name: Add comment
         run: gh issue comment "$NUMBER" --repo "$REPO" --body "$BODY"
@@ -43,4 +51,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUMBER: ${{ github.event.issue.number }}
           REPO: ${{ github.repository }}
-          BODY: "Bucket created: ${{ env.BUCKET_NAME }} 🚀"
+          BODY: "Bucket created: ${{ env.BUCKET_NAME }} 🚀 | ${{env.URL_BUCKET}}"
